@@ -2,6 +2,7 @@ import requests
 import os
 from bs4 import BeautifulSoup
 import re
+import pandas as pd
 
 def download_txt_file(url):
     os.makedirs("downloads", exist_ok=True)
@@ -15,15 +16,12 @@ def download_txt_file(url):
 
         parameters = tag['href'].replace('>', '&gt')
         uri = domain + parameters
-        print("Download URL:", uri)
 
         request = requests.get(uri)
         if request.status_code == 200:
             filename = "downloads/match_history.txt"
             with open(filename, 'wb') as f:
                 f.write(request.content)
-                print("Successful")
-                
     else:
         print("failed. status code: ", response.status_code)
     pass
@@ -51,10 +49,11 @@ def parse_data(file_location):
     return games
 
 def main():
-    download_txt_file(requests, "https://www.littlegolem.net/jsp/info/player_game_list.jsp?gtid=einstein&plid=10675")
+    download_txt_file("https://www.littlegolem.net/jsp/info/player_game_list.jsp?gtid=einstein&plid=10675")
     path = "C:\\Users\\youss\\Desktop\\DataEngineering\\LittleGolem\\downloads\\match_history.txt"
     games = parse_data(path)
-    pass
+    df = pd.DataFrame(games)
+    print(df.head())
 
 
 if __name__ == "__main__":
